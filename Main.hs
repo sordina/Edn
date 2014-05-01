@@ -3,15 +3,14 @@ module Main where
 
 import Print
 import Data.EDN.Parser
-import Text.Groom
 import Data.EDN.Types
 import qualified Data.ByteString.Lazy       as BSL
 import qualified Data.Text.Internal.Builder as B
 import qualified Data.Text.Lazy.IO          as T
 
 removeTag :: TaggedValue -> Value
-removeTag (NoTag v)       = v
-removeTag (Tagged v ns t) = v
+removeTag (NoTag v)      = v
+removeTag (Tagged v _ _) = v
 
 main :: IO ()
 main = BSL.getContents >>= run

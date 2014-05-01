@@ -21,14 +21,11 @@ import Data.EDN.Types.Class (ToEDN, toEDN)
 -- | Encode a Tagged EDN value to a 'Builder'.
 fromTagged :: Int -> E.TaggedValue -> Builder
 fromTagged n (E.NoTag v) = fromValue n v
-fromTagged n (E.Tagged v "" t) = singleton '#' <> string t <> sp <> fromValue n v
-fromTagged n (E.Tagged v ns t) = singleton '#' <> string ns <> singleton '/' <> string t <> sp <> fromValue n v
+fromTagged n (E.Tagged v "" t) = singleton '#' <> string t <> " " <> fromValue n v
+fromTagged n (E.Tagged v ns t) = singleton '#' <> string ns <> singleton '/' <> string t <> " " <> fromValue n v
 
 spaces :: Int -> Builder
-spaces n = fromString $ replicate n ' '
-
-sp :: Builder
-sp = singleton ' '
+spaces n = fromString $ replicate n '\t'
 
 -- | Encode a raw EDN value to a 'Builder'.
 fromValue :: Int -> E.Value -> Builder
@@ -41,9 +38,9 @@ fromValue _ (E.Symbol ns v) = string ns <> "/" <> string v
 fromValue _ (E.Keyword kw)  = ":" <> string kw
 fromValue _ (E.Integer i)   = decimal i
 fromValue _ (E.Floating f)  = realFloat f
-fromValue _ (E.List xs)     = "("  <> fromList xs <> ")"
-fromValue _ (E.Vec xs)      = "["  <> fromList (V.toList xs) <> "]"
-fromValue _ (E.Set xs)      = "#{" <> fromList (S.toList xs) <> "}"
+fromValue n (E.List xs)     = "("  <> fromList n xs <> ")"
+fromValue n (E.Vec xs)      = "["  <> fromList n (V.toList xs) <> "]"
+fromValue n (E.Set xs)      = "#{" <> fromList n (S.toList xs) <> "}"
 fromValue n (E.Map as)      = "{"  <> "\n" <> fromAssoc (n+1) (M.assocs as) <> spaces n <> "}"
 
 string :: BS.ByteString -> Builder
@@ -71,15 +68,15 @@ quoteChar c = case c of
     ' '  -> string "space"
     _    -> singleton c
 
-fromList :: [E.TaggedValue] -> Builder
-fromList [] = ""
-fromList (x:[]) = fromTagged 0 x
-fromList (x:xs) = fromTagged 0 x <> sp <> fromList xs
+fromList :: Int -> [E.TaggedValue] -> Builder
+fromList _ [] = ""
+fromList n (x:[]) = fromTagged n x
+fromList n (x:xs) = fromTagged n x <> " " <> fromList n xs
 
 fromAssoc :: Int -> [(E.Value, E.TaggedValue)] -> Builder
 fromAssoc _ [] = ""
-fromAssoc n ((k, v):[]) = spaces n <> fromValue n k <> sp <> fromTagged n v <> "\n"
-fromAssoc n ((k, v):as) = spaces n <> fromValue n k <> sp <> fromTagged n v <> sp <> "\n" <> spaces n <> fromAssoc n as
+fromAssoc n ((k, v):[]) = spaces n <> fromValue n k <> " " <> fromTagged n v <> "\n"
+fromAssoc n ((k, v):as) = spaces n <> fromValue n k <> " " <> fromTagged n v <> "\n" <> fromAssoc n as
 
 -- | Serialize a value as a lazy 'L.ByteString'.
 encode :: ToEDN a => a -> L.ByteString
