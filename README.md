@@ -7,27 +7,26 @@ Edn parsing library used and modified from [hedn](https://bitbucket.org/dpwiz/he
 
 ## Usage
 
-		Usage:
-			edn FILE
-			edn < FILE
+	edn FILE
+	edn < FILE
 
 ## Example
 
-		$ echo '{:foo {:key :value :attributes [:x :y :z] \\ 
-						 :fuzzes [{:i :love} {:red :pandas} {:for :real}]}}' | edn
-		{
-			:foo {
-				:attributes [:x :y :z]
-				:fuzzes [{
-					:i :love
-				} {
-					:red :pandas
-				} {
-					:for :real
-				}]
-				:key :value
-			}
+	$ echo '{:foo {:key :value :attributes [:x :y :z] \ 
+					 :fuzzes [{:i :love} {:red :pandas} {:for :real}]}}' | edn
+	{
+		:foo {
+			:attributes [:x :y :z]
+			:fuzzes [{
+				:i :love
+			} {
+				:red :pandas
+			} {
+				:for :real
+			}]
+			:key :value
 		}
+	}
 
 ## Binaries
 
