@@ -7,8 +7,27 @@ Edn parsing library used and modified from [hedn](https://bitbucket.org/dpwiz/he
 
 ## Usage
 
-		> cabal install
-		> echo '{:test true}' | edn
+		Usage:
+			edn FILE
+			edn < FILE
+
+## Example
+
+		$ echo '{:foo {:key :value :attributes [:x :y :z] \\ 
+						 :fuzzes [{:i :love} {:red :pandas} {:for :real}]}}' | edn
+		{
+			:foo {
+				:attributes [:x :y :z]
+				:fuzzes [{
+					:i :love
+				} {
+					:red :pandas
+				} {
+					:for :real
+				}]
+				:key :value
+			}
+		}
 
 ## Binaries
 
