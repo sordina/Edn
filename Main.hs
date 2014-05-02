@@ -2,8 +2,9 @@
 module Main where
 
 import Print
-import System.IO
-import System.Exit
+import System.IO          (stderr, hPutStrLn)
+import System.Exit        (exitFailure)
+import System.Environment (getArgs)
 import Data.EDN.Parser
 import Data.EDN.Types
 import qualified Data.ByteString.Lazy       as BSL
@@ -15,14 +16,21 @@ removeTag (NoTag v)      = v
 removeTag (Tagged v _ _) = v
 
 main :: IO ()
-main = BSL.getContents >>= validate
+main = getArgs >>= options
+
+options :: [String] -> IO ()
+options ("-h"    :_) = help
+options ("--help":_) = help
+options (_ : _ : _ ) = help
+options [file      ] = BSL.readFile file >>= validate
+options [          ] = BSL.getContents   >>= validate
 
 validate :: BSL.ByteString -> IO ()
 validate b | BSL.null b = help
            | otherwise  = run b
 
 help :: IO ()
-help = hPutStrLn stderr "Usage: edn < EDNFILE.edn"
+help = hPutStrLn stderr "Usage:\n  edn FILE\n  edn < FILE"
     >> exitFailure
 
 run :: BSL.ByteString -> IO ()
