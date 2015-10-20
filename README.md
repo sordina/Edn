@@ -1,4 +1,7 @@
 
+
+# NOTE - Deprecated in favour of [Pretty-Braces](https://github.com/sordina/prettybraces)
+
 # Edn
 
 A simple utility to pretty-print [Edn](https://github.com/edn-format/edn) formatted data.
